@@ -1,0 +1,4 @@
+pytest~=6.2.5
+launch~=1.0.6
+setuptools~=58.2.0
+rclpy~=3.3.14
