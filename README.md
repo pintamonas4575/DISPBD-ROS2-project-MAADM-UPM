@@ -5,7 +5,7 @@ Creación de un nodo personalizado en ROS2 Humble para controlar la tortuga "tur
 **Funcionalidades:**
 
 - Moverse pulsando las **teclas W (arriba), S (abajo), A (izquierda) y D (derecha)**.
-- La pulsación de la **tecla SPACE** habilita/dehabilita el pintado, de tal manera que cuando está habilitado la tortuga pinte en las posiciones en las que se encuentre.
+- La pulsación de la **tecla SPACE** habilita/dehabilita el pintado, de tal manera que cuando está habilitado la tortuga pinta en las posiciones en las que se encuentre.
 - Cuando se pulsa la **tecla C** (clear) se borra todo lo dibujado.
 - Cuando se pulsa la **tecla R** (reset) se reinicia la posición de la tortuga al 
 centro de la pantalla.
