@@ -168,6 +168,13 @@ class NodoTortugaSpeed(Node):
         set_pen_req.off = 0  # Bajar el lápiz
         set_pen_client.call_async(set_pen_req)
 
+        twist = Twist()
+        self.linear_speed = 0.0
+        self.angular_speed = 0.0
+        twist.linear.x = self.linear_speed
+        twist.angular.z = self.angular_speed
+        self.publisher_.publish(twist) # Publico para parar la tortuga
+
     def clear_traces(self) -> None:
         client_clear = self.create_client(Empty, '/clear')
         while not client_clear.wait_for_service(timeout_sec=1.0):
