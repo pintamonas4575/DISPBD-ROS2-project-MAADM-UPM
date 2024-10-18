@@ -9,7 +9,7 @@ from geometry_msgs.msg import Twist
 from std_srvs.srv import Empty
 from turtlesim.srv import TeleportAbsolute, SetPen
 
-def get_my_key():
+def get_my_key() -> str:
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
@@ -19,7 +19,7 @@ def get_my_key():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return key
 
-def set_random_color():
+def set_random_color() -> tuple[int, int, int]:
     r = random.randint(0, 255)
     g = random.randint(0, 255)
     b = random.randint(0, 255)
@@ -58,7 +58,7 @@ class NodoTortugaSpeed(Node):
         self.keyboard_thread = threading.Thread(target=self.capture_keys, daemon=True)
         self.keyboard_thread.start()
 
-    def parameter_callback(self, params):
+    def parameter_callback(self, params) -> SetParametersResult:
         for param in params:
             if param.name == 'speed':
                 self.speed = param.value
@@ -69,7 +69,7 @@ class NodoTortugaSpeed(Node):
                 self.dinamic_log(self.log_level,f"Log level actualizado desde la terminal: {self.log_level}")
         return SetParametersResult(successful=True)
 
-    def set_logger_level(self, log_level):
+    def set_logger_level(self, log_level: str) -> None:
         log_levels = {
             'DEBUG': LoggingSeverity.DEBUG,
             'INFO': LoggingSeverity.INFO,
@@ -81,7 +81,7 @@ class NodoTortugaSpeed(Node):
         level = log_levels.get(log_level.upper(), LoggingSeverity.INFO)
         self.get_logger().set_level(level)
 
-    def dinamic_log(self, level, message):
+    def dinamic_log(self, level: str, message: str) -> None:
         if level == 'DEBUG':
             self.get_logger().debug(message)
         elif level == 'INFO':
@@ -95,7 +95,7 @@ class NodoTortugaSpeed(Node):
         else:
             self.get_logger().info(message)  # Por defecto
 
-    def capture_keys(self):
+    def capture_keys(self) -> None:
         # Hilo para capturar las teclas
         while rclpy.ok() and not self.stop_node:
             key = get_my_key()
@@ -121,18 +121,7 @@ class NodoTortugaSpeed(Node):
                 self.linear_speed = 0.0
                 self.angular_speed = 0.0
 
-    def toggle_pen(self):
-        self.is_pen_down = not self.is_pen_down
-        r, g, b = set_random_color()
-        set_pen_req = SetPen.Request()
-        set_pen_req.r = r
-        set_pen_req.g = g
-        set_pen_req.b = b
-        set_pen_req.width = 3
-        set_pen_req.off = 0 if self.is_pen_down else 1
-        self.client_set_pen.call_async(set_pen_req)
-
-    def run(self):
+    def run(self) -> None:
         # Ciclo principal del nodo
         twist = Twist()
 
@@ -145,7 +134,18 @@ class NodoTortugaSpeed(Node):
 
         rclpy.shutdown()
 
-    def reset_turtle(self):
+    def toggle_pen(self) -> None:
+        self.is_pen_down = not self.is_pen_down
+        r, g, b = set_random_color()
+        set_pen_req = SetPen.Request()
+        set_pen_req.r = r
+        set_pen_req.g = g
+        set_pen_req.b = b
+        set_pen_req.width = 3
+        set_pen_req.off = 0 if self.is_pen_down else 1
+        self.client_set_pen.call_async(set_pen_req)
+
+    def reset_turtle(self) -> None:
         teleport_client = self.create_client(TeleportAbsolute, '/turtle1/teleport_absolute')
         set_pen_client = self.create_client(SetPen, '/turtle1/set_pen')
 
@@ -168,7 +168,7 @@ class NodoTortugaSpeed(Node):
         set_pen_req.off = 0  # Bajar el lápiz
         set_pen_client.call_async(set_pen_req)
 
-    def clear_traces(self):
+    def clear_traces(self) -> None:
         client_clear = self.create_client(Empty, '/clear')
         while not client_clear.wait_for_service(timeout_sec=1.0):
             self.dinamic_log(self.log_level,'Esperando por el servicio /clear...')
